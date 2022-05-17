@@ -71,6 +71,8 @@ pred_is6 = A_new_test*x_is6;
 pred_is7 = A_new_test*x_is7;
 pred_is8 = A_new_test*x_is8;
 pred_is9 = A_new_test*x_is9;
+undefined_images = zeros(num_images,3);
+undefined_num = 0;
 
 % The way the following code works is by taking every single image
 % and comparing the values we got in each of the 10 identifiers
@@ -121,10 +123,32 @@ for i = 1:num_images
    currentDigitPred  = 9;
    currentMaxPred = pred_is9(i);  
  end
+ if(currentMaxPred <= 0)
+   undefined_images(i,:) = [i, currentMaxPred, currentDigitPred];
+   undefined_num = undefined_num+1;
+ end
  pred(i) = currentDigitPred;
 end
 
+figure(2);
+imagesc(reshape(A_new_test(17,1:28^2),[28,28]));
+colormap(gray(256))
+axis image; axis off; 
 
 %% =========================== Evaluate ==============================
 acc = mean(pred == true_labels)*100;
 disp(['Accuracy=',num2str(acc),'% (',num2str((1-acc/100)*num_images),' wrong examples)']); 
+
+%% =====================Print 5 wrong pictures========================
+
+error = find(pred~=true_labels);
+for i = 1:5
+    figure(2);
+    imagesc(reshape(A_new_test(error(i),1:28^2),[28,28]));
+    colormap(gray(256));
+    axis image; axis off; 
+    pause;
+end
+
+
+
